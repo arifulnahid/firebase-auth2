@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../ContextAPI/ContextAPI';
 
 const Header = () => {
+    const { user, logOut } = useContext(AuthContext);
+    // console.log(user);
+
     return (
         <div data-theme="cupcake">
             <div className="navbar bg-base-100">
@@ -10,9 +14,20 @@ const Header = () => {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal p-0">
-                        <li><Link to='login'>Login</Link></li>
-                        <li><Link to='signup'>SignUp</Link></li>
-                        <li><Link to='profile'>Profile</Link></li>
+                        {
+                            user?.uid ?
+                                <>
+                                    <li><button onClick={logOut}>Logout</button></li>
+                                    <li><p>{user.displayName}</p></li>
+                                </>
+                                :
+                                <>
+                                    <li><Link to='login'>Login</Link></li>
+                                    <li><Link to='signup'>SignUp</Link></li>
+                                    <li><Link to='profile'>Profile</Link></li>
+                                </>
+
+                        }
                     </ul>
                 </div>
             </div>

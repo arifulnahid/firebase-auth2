@@ -1,12 +1,30 @@
-import React, { createContext } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import React, { createContext, useEffect, useState } from 'react';
+import { auth, googleSignIn } from '../firebase/firebaseAuth';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 const ContextAPI = ({ children }) => {
 
-    const user = { name: "ariful" }
+    const [user, setUser] = useState();
 
-    const authInfo = { user }
+    const logOut = () => {
+        signOut(auth)
+            .then(() => {
+                console.log("Sign Out Succsessfuly");
+            })
+            .catch(err => console.log(err))
+    }
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            // console.log("current user: ", currentUser);
+            setUser(currentUser);
+        });
+        return () => { unsubscribe() }
+    }, []);
+
+    const authInfo = { user, googleSignIn, logOut }
 
     return (
         <AuthContext.Provider value={authInfo}>
